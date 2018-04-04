@@ -35,12 +35,12 @@ import com.lebron.springboot.config.mybatis.MyMybatisProperties;
 @Configuration
 @ConditionalOnClass({EnableTransactionManagement.class })
 @Import({DataBaseConfiguration.class })
-//启动类一定不能扫描到BaseService
-//@MapperScan(basePackages = {"com.lebron.springboot.mapper" })
+// 启动类一定不能扫描到BaseService
+// @MapperScan(basePackages = {"com.lebron.springboot.mapper" })
 @MapperScan(basePackages = "com.lebron.springboot.mapper")
 public class TxxsbatisConfiguration {
 
-//    private static final Logger logger = LoggerFactory.getLogger(TxxsbatisConfiguration.class);
+    // private static final Logger logger = LoggerFactory.getLogger(TxxsbatisConfiguration.class);
 
     @Value("${spring.datasource.type}")
     private Class<? extends DataSource> dataSourceType;
@@ -74,10 +74,10 @@ public class TxxsbatisConfiguration {
         }
         // 在setConfigLocation方法中指定了配置文件地址，不需要在添加setting
         factory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
-        //TODO 为什么报错
-//         factory.getObject().getConfiguration().setLogImpl(log());
+        // TODO 为什么不打印sql
+        factory.getObject().getConfiguration().setLogImpl(StdOutImpl.class);
 
-//        factory.setConfigLocation(configLocation());
+        // factory.setConfigLocation(configLocation());
         return factory.getObject();
     }
 
@@ -89,7 +89,7 @@ public class TxxsbatisConfiguration {
     @Bean
     public Resource configLocation() {
         return new PathResource("/mybatis/mybatis-config.xml");
-//        return new PathResource(mybatisProperties.getConfigLocation());
+        // return new PathResource(mybatisProperties.getConfigLocation());
     }
 
     /**
@@ -130,9 +130,4 @@ public class TxxsbatisConfiguration {
         return mapperInterceptor;
     }
 
-    @Bean
-    public Log log() {
-        Log log = new StdOutImpl("STDOUT_LOGGING");
-        return log;
-    }
 }
