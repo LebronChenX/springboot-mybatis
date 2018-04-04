@@ -1,15 +1,20 @@
 package com.lebron.springboot.config.druid;
 
+import java.sql.SQLException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import com.alibaba.druid.pool.DruidDataSource;
 
 @Component
-@ConfigurationProperties(prefix = "spring.druid" )
+@ConfigurationProperties(prefix = "spring.druid")
 public class DataSourceConfigBuilder {
 
-    
+    private static final Logger logger = LoggerFactory.getLogger(DataSourceConfigBuilder.class);
     private int initialSize;
     private int minIdle;
     private int maxActive;
@@ -22,9 +27,11 @@ public class DataSourceConfigBuilder {
     private boolean testOnReturn;
     private boolean poolPreparedStatements;
     private int maxPoolPreparedStatementPerConnectionSize;
+    private String filters;
+    private String connectionProperties;
 
     public DruidDataSource config(DruidDataSource datasource) {
-        //configuration
+        // configuration
         datasource.setInitialSize(initialSize);
         datasource.setMinIdle(minIdle);
         datasource.setMaxActive(maxActive);
@@ -37,6 +44,15 @@ public class DataSourceConfigBuilder {
         datasource.setTestOnReturn(testOnReturn);
         datasource.setPoolPreparedStatements(poolPreparedStatements);
         datasource.setMaxPoolPreparedStatementPerConnectionSize(maxPoolPreparedStatementPerConnectionSize);
+        if (!StringUtils.isEmpty(filters)) {
+            try {
+                datasource.setFilters(filters);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                logger.error("datasource set filters error", e);
+            }
+        }
+        datasource.setConnectionProperties(connectionProperties);
         return datasource;
     }
 
@@ -138,6 +154,22 @@ public class DataSourceConfigBuilder {
 
     public void setMaxPoolPreparedStatementPerConnectionSize(int maxPoolPreparedStatementPerConnectionSize) {
         this.maxPoolPreparedStatementPerConnectionSize = maxPoolPreparedStatementPerConnectionSize;
+    }
+
+    public String getFilters() {
+        return filters;
+    }
+
+    public void setFilters(String filters) {
+        this.filters = filters;
+    }
+
+    public String getConnectionProperties() {
+        return connectionProperties;
+    }
+
+    public void setConnectionProperties(String connectionProperties) {
+        this.connectionProperties = connectionProperties;
     }
 
 }

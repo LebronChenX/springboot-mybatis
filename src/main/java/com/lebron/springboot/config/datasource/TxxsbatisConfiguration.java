@@ -14,8 +14,6 @@ import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,12 +35,12 @@ import com.lebron.springboot.config.mybatis.MyMybatisProperties;
 @Configuration
 @ConditionalOnClass({EnableTransactionManagement.class })
 @Import({DataBaseConfiguration.class })
-//@MapperScan(basePackages = {"com.hui.readwrite.mapper.master1" })
 //启动类一定不能扫描到BaseService
+//@MapperScan(basePackages = {"com.lebron.springboot.mapper" })
 @MapperScan(basePackages = "com.lebron.springboot.mapper")
 public class TxxsbatisConfiguration {
 
-    private static final Logger logger = LoggerFactory.getLogger(TxxsbatisConfiguration.class);
+//    private static final Logger logger = LoggerFactory.getLogger(TxxsbatisConfiguration.class);
 
     @Value("${spring.datasource.type}")
     private Class<? extends DataSource> dataSourceType;
@@ -78,7 +76,6 @@ public class TxxsbatisConfiguration {
         factory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
         //TODO 为什么报错
 //         factory.getObject().getConfiguration().setLogImpl(log());
-        factory.getObject().getConfiguration().setLogPrefix("logImpl");
 
 //        factory.setConfigLocation(configLocation());
         return factory.getObject();
