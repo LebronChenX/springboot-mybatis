@@ -1,7 +1,7 @@
 package com.lebron.springboot.config.datasource;
 
 public enum DataSourceType {
-	read("read", "从库"), write("write", "主库");
+	read("read", "读库"), write("write", "写库");
 
 	private String type;
 	private String name;

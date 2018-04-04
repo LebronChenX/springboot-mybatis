@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.stdout.StdOutImpl;
 import org.apache.ibatis.plugin.Interceptor;
@@ -38,7 +39,7 @@ import com.lebron.springboot.config.mybatis.MyMybatisProperties;
 // 启动类一定不能扫描到BaseService
 // @MapperScan(basePackages = {"com.lebron.springboot.mapper" })
 @MapperScan(basePackages = "com.lebron.springboot.mapper")
-public class TxxsbatisConfiguration {
+public class MybatisConfiguration {
 
     // private static final Logger logger = LoggerFactory.getLogger(TxxsbatisConfiguration.class);
 
@@ -65,6 +66,8 @@ public class TxxsbatisConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory() throws Exception {
+        // 解决myBatis下 不能嵌套jar文件的问题
+        VFS.addImplClass(SpringBootVFS.class);
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
         factory.setDataSource(roundRobinDataSouceProxy());
         factory.setTypeAliasesPackage(mybatisProperties.getTypeAliasesPackage());
@@ -76,8 +79,6 @@ public class TxxsbatisConfiguration {
         factory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
         // TODO 为什么不打印sql
         factory.getObject().getConfiguration().setLogImpl(StdOutImpl.class);
-
-        // factory.setConfigLocation(configLocation());
         return factory.getObject();
     }
 
@@ -86,19 +87,13 @@ public class TxxsbatisConfiguration {
         return new PathMatchingResourcePatternResolver().getResources(mybatisProperties.getMapperLocations());
     }
 
-    @Bean
-    public Resource configLocation() {
-        return new PathResource("/mybatis/mybatis-config.xml");
-        // return new PathResource(mybatisProperties.getConfigLocation());
-    }
-
     /**
      * 有多少个数据源就要配置多少个bean
      */
     @Bean
     public AbstractRoutingDataSource roundRobinDataSouceProxy() {
         int size = Integer.parseInt(dataSourceSize);
-        TxxsAbstractRoutingDataSource proxy = new TxxsAbstractRoutingDataSource(size);
+        RoutingDataSource proxy = new RoutingDataSource(size);
         Map<Object, Object> targetDataSources = new HashMap<Object, Object>();
         targetDataSources.put(DataSourceType.write.getType(), dataSource);
         for (int i = 0; i < size; i++) {
@@ -113,6 +108,7 @@ public class TxxsbatisConfiguration {
     public PageHelper pageHelper(DataSource dataSource) {
         PageHelper pageHelper = new PageHelper();
         Properties p = new Properties();
+        p.setProperty("dialect", "mysql");
         p.setProperty("offsetAsPageNum", "true");
         p.setProperty("rowBoundsWithCount", "true");
         p.setProperty("reasonable", "true");

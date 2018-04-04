@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -12,6 +13,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 
 @Component
 @ConfigurationProperties(prefix = "spring.druid")
+@PropertySource("classpath:druid.properties")
 public class DataSourceConfigBuilder {
 
     private static final Logger logger = LoggerFactory.getLogger(DataSourceConfigBuilder.class);

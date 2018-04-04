@@ -1,0 +1,26 @@
+package com.lebron.springboot.config.datasource;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
+
+public class RoutingDataSource extends AbstractRoutingDataSource {
+
+	private final int dataSourceNumber;
+	private AtomicInteger count = new AtomicInteger(0);
+
+	public RoutingDataSource(int dataSourceNumber) {
+		this.dataSourceNumber = dataSourceNumber;
+	}
+
+	@Override
+	protected Object determineCurrentLookupKey() {
+		String typeKey = DataSourceContextHolder.getJdbcType();
+		if (typeKey.equals(DataSourceType.write.getType()))
+			return DataSourceType.write.getType();
+		// 读 简单负载均衡
+		int number = count.getAndAdd(1);
+		int lookupKey = number % dataSourceNumber;
+		return new Integer(lookupKey);
+	}
+}

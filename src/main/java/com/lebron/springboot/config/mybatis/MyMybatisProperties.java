@@ -1,10 +1,12 @@
 package com.lebron.springboot.config.mybatis;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
 @ConfigurationProperties(prefix = MyMybatisProperties.MYBATIS_PREFIX)
+@PropertySource("classpath:mybatis.properties")
 public class MyMybatisProperties {
 
     public static final String MYBATIS_PREFIX = "mybatis";

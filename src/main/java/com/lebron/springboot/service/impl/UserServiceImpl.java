@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.pagehelper.PageHelper;
 import com.lebron.springboot.mapper.UserMapper;
 import com.lebron.springboot.model.User;
 import com.lebron.springboot.service.UserService;
@@ -32,10 +33,10 @@ public class UserServiceImpl extends BaseService<User> implements UserService {
 
     @Override
     public List<User> pageUser() {
+        PageHelper.startPage(1, 1);
+        
         User user = new User();
-        user.setName("1");
-        super.selectPageListByExample(new User(), 1, 1);
-        return null;
+        return super.selectList(user);
     }
     
     @Override
