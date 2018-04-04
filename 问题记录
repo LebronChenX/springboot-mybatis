@@ -1,3 +1,3 @@
 2018-04-04：
   1.TxxsbatisConfiguration类中的factory.getObject().getConfiguration().setLogImpl(log())为什么报错
-  2.Druid sql监控为什么不生效
+  2.Druid sql监控为什么不生效    -> 由于配置DruidDataSource的时候没有配置filter属性
